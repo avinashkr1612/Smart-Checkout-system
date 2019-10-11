@@ -1,367 +1,129 @@
-  <!DOCTYPE html>
-  <html>
-  <head>
-  <meta charset="utf-8">
-  <title>Display Webcam Stream</title>
-   <!-- <script src="js/script.js"></script> -->
-   <link rel="stylesheet" href="{{url_for('static', filename='js/script.js')}}">
-  
-   <link rel="stylesheet" href="{{url_for('static', filename='css/master.css')}}">
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>Display Webcam Stream</title>
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/master.css')}}">
+    </head>
+    <body>
+    <nav class="navbar is-light">
+      <div class="navbar-brand">
+        <a class="navbar-item" >
+          <img src="{{url_for('static', filename='img/logo.png')}}" style="width:170px; height:70px; max-height:100px;margin-left:10px;">
+        </a>
+        <!-- <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div> -->
 
-   <!-- <script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="html2canvas.js"></script> 
+      </div>
+      <div class="navbar-end" href="cart">
+        <a class="navbar-item">
+          <img src="{{url_for('static', filename='img/cart.png')}}" onclick="showModal()"  style="width:80px; height:60px; max-height:70px;margin-right:10px;">
+        </a>
+      </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-   <script>
-    function take_screenshot()
-    {
-     html2canvas(document.body, {  
-      onrendered: function(canvas)  
-      {
-        var img = canvas.toDataURL()
-        $.post("save_screenshot.php", {data: img}, function (file){
-      window.location.href =  "save_screenshot.php?file="+ file
-        });
-      }
-     });
-    }
-    </script>   -->
+    </nav>
+
+  <br><br>
+    <div class="container">
+      <div class="tile is-ancestor">
+        <div class="tile is-vertical is-8" style="height:500px">
+          <div class="tile is-parent">
+            <article class="tile is-child notification is-dark" style="padding:0px;">
+              <p class="subtitle" style="width:100%;padding:20px;background:rgba(195,195,195,.5)">Place the item in front of Camera</p>
+			  <img  src="{{ url_for('video_feed') }}" id="videoElement" style="width:500px;height:350px" alt="">
+              <button type="btn" class="button is-info is-large" style="position: absolute; bottom:10px;right:10px;"> CAPTURE </button>
+            </article>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <article class="tile is-child notification">
+            <div class="content">
+                <p class="title is-4">Horlicks-Classic Malt- 1kg</p>
+                <p class="subtitle" style="padding-top:10px;">Quantity : <input type="text" name="quantity" id="quant" value="1" style="width:30px;text-align:center;border-radius:5px;outline:none;border:none"></p>
+              <a class="button is-info is-large is-fullwidth">Add to Cart</a><br><br>
+              <a class="button is-info is-large is-fullwidth" onclick="showModal()">Proceed to Checkout (5 item)</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="section-to-print">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">
+              <img src="img/logo.png" style="width:170px; height:70px; max-height:100px;margin-left:10px;">
+            </p>
+            <button class="delete" aria-label="close" onclick="hideModal()"></button>
+          </header>
+          <section class="modal-card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Sr. No</th>
+                  <th>Product ID</th>
+                  <th>Name of Product</th>
+                  <th>Quantity</th>
+                  <th>Cost of Product</th>
+                  <th>Final Cost of Product</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>H_CM_1kg</td>
+                  <td>Horlicks Classic Malt 1kg</td>
+                  <td>1</td>
+                  <td>380</td>
+                  <td>380</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>H_CM_1kg</td>
+                    <td>Horlicks Classic Malt 1kg</td>
+                    <td>1</td>
+                    <td>380</td>
+                    <td>380</td>
+                  </tr>
+              </tbody>
+              <tfoot>
+                <tr> 
+                  <th colspan="5" style="text-align:right;">
+                    Final Cost :
+                  </th>
+                  <th colspan="1">
+                      180
+                    </th>
+                </tr>
+              </tfoot>
+            </table>
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-info" id="print" onclick="printInvoice()"> Print Invoice</button>
+            <!-- <button class="button">Cancel</button> -->
+          </footer>
+        </div>
+      </div>
 <script>
+function printInvoice(){
+  window.print();
+}
 
+function hideModal(){
+  document.getElementById('section-to-print').style.display = 'none';
+}
 
-
+function showModal(){
+  document.getElementById('section-to-print').style.display = 'block';
+}
 </script>
 
-
-
-  </head>
-  <body>
-  <div class="nav">
-      <div class="banner">
-        <img src="{{url_for('static', filename='img/logo.png')}}" >
-      </div>
-  </div>
-  <!-- 
-  <div class="banner01">
-  <img src="" alt="">
-  </div> -->
-  <br><br>
-  <div class="columns is-centered">
-      <div class="column is-1">
-
-      </div>
-        
-      <div id="column is-5">
-
-         <img  src="{{ url_for('video_feed') }}" id="videoElement" style="width:500px;height:350px" alt="">
-          <br><br>
-          <form enctype=multipart/form-data action="/capture" method = "POST" >
-            <input type = "submit" value="CAPTURE"/>          
-          </form>
-	{% if stats %}
-  		<h1>Hello {{ stats }}!</h1>
-	{% else %}
-  		<h1>Hello, World!</h1>
-	{% endif %}
-
-          <br><br>
-          <div class="columns">
-            <div class="column"></div>
-          </div>
-      </div>
-      <div class="column is-5">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Sr. No</th>
-              <th>Product ID</th>
-              <th>Name of Product</th>
-              <th>Quantity </th>
-              <th>Cost of Production</th>
-              <th>Final cost of Product</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>1</th>
-              <td>234</td>
-              <td>XYZ Toothpaste-Small</td>
-              <td>1</td>
-              <td>20</td>
-              <td>20</td> 
-            </tr>  
-            <tr>
-                <th>2</th>
-                <td>234</td>
-                <td>XYZ Toothpaste-Small</td>
-                <td>1</td>
-                <td>20</td>
-                <td>20</td> 
-              </tr>   
-              <tr>
-                  <th>3</th>
-                  <td>234</td>
-                  <td>XYZ Toothpaste-Small</td>
-                  <td>1</td>
-                  <td>20</td>
-                  <td>20</td> 
-                </tr>   
-                <tr>
-              <th>4</th>
-              <td>234</td>
-              <td>XYZ Toothpaste-Small</td>
-              <td>1</td>
-              <td>20</td>
-              <td>20</td> 
-            </tr>
-            <tr>
-              <th>5</th>
-              <td>234</td>
-              <td>XYZ Toothpaste-Small</td>
-              <td>1</td>
-              <td>20</td>
-              <td>20</td> 
-            </tr>
-            <tr>
-              <th>6</th>
-              <td>234</td>
-              <td>XYZ Toothpaste-Small</td>
-              <td>1</td>
-              <td>20</td>
-              <td>20</td> 
-            </tr>
-            <tr>
-              <th>7</th>
-              <td>234</td>
-              <td>XYZ Toothpaste-Small</td>
-              <td>1</td>
-              <td>20</td>
-              <td>20</td> 
-            </tr>
-                <tr>
-                    <th>8</th>
-                    <td>234</td>
-                    <td>XYZ Toothpaste-Small</td>
-                    <td>1</td>
-                    <td>20</td>
-                    <td>20</td> 
-                  </tr>        
-          </tbody>
-        </table>
-      </div>
-      <div class="column is-1">
-
-        </div>
-  </div>
-  <section class="performance-facts">
-    <header class="performance-facts__header">
-      <h1 class="performance-facts__title">Invoice...  <img src="{{url_for('static', filename='img/logo-sm.png')}}"> </h1>
-      <p>Kirana Retail Store
-      <p>Greater Noida - 201306</p>
-    </header>
-    <table class="performance-facts__table">
-      <thead>
-        <tr>
-          <th colspan="3" class="small-info">
-            Amount Per Serving
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <b>Calories</b>
-            200
-          </th>
-          <td>
-            Calories from Fat
-            130
-          </td>
-        </tr>
-        <tr class="thick-row">
-          <td colspan="3" class="small-info">
-            <b>% Daily Value*</b>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2">
-            <b>Total Fat</b>
-            14g
-          </th>
-          <td>
-            <b>22%</b>
-          </td>
-        </tr>
-        <tr>
-          <td class="blank-cell">
-          </td>
-          <th>
-            Saturated Fat
-            9g
-          </th>
-          <td>
-            <b>22%</b>
-          </td>
-        </tr>
-        <tr>
-          <td class="blank-cell">
-          </td>
-          <th>
-            Trans Fat
-            0g
-          </th>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2">
-            <b>Cholesterol</b>
-            55mg
-          </th>
-          <td>
-            <b>18%</b>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2">
-            <b>Sodium</b>
-            40mg
-          </th>
-          <td>
-            <b>2%</b>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2">
-            <b>Total Carbohydrate</b>
-            17g
-          </th>
-          <td>
-            <b>6%</b>
-          </td>
-        </tr>
-        <tr>
-          <td class="blank-cell">
-          </td>
-          <th>
-            Dietary Fiber
-            1g
-          </th>
-          <td>
-            <b>4%</b>
-          </td>
-        </tr>
-        <tr>
-          <td class="blank-cell">
-          </td>
-          <th>
-            Sugars
-            14g
-          </th>
-          <td>
-          </td>
-        </tr>
-        <tr class="thick-end">
-          <th colspan="2">
-            <b>Protein</b>
-            3g
-          </th>
-          <td>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <table class="performance-facts__table--grid">
-      <tbody>
-        <tr>
-          <td colspan="2">
-            Vitamin A
-            10%
-          </td>
-          <td>
-            Vitamin C
-            0%
-          </td>
-        </tr>
-        <tr class="thin-end">
-          <td colspan="2">
-            Calcium
-            10%
-          </td>
-          <td>
-            Iron
-            6%
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <p class="small-info">* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs:</p>
-    
-    <table class="performance-facts__table--small small-info">
-      <thead>
-        <tr>
-          <td colspan="2"></td>
-          <th>Calories:</th>
-          <th>2,000</th>
-          <th>2,500</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th colspan="2">Total Fat</th>
-          <td>Less than</td>
-          <td>65g</td>
-          <td>80g</td>
-        </tr>
-        <tr>
-          <td class="blank-cell"></td>
-          <th>Saturated Fat</th>
-          <td>Less than</td>
-          <td>20g</td>
-          <td>25g</td>
-        </tr>
-        <tr>
-          <th colspan="2">Cholesterol</th>
-          <td>Less than</td>
-          <td>300mg</td>
-          <td>300 mg</td>
-        </tr>
-        <tr>
-          <th colspan="2">Sodium</th>
-          <td>Less than</td>
-          <td>2,400mg</td>
-          <td>2,400mg</td>
-        </tr>
-        <tr>
-          <th colspan="3">Total Carbohydrate</th>
-          <td>300g</td>
-          <td>375g</td>
-        </tr>
-        <tr>
-          <td class="blank-cell"></td>
-          <th colspan="2">Dietary Fiber</th>
-          <td>25g</td>
-          <td>30g</td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <p class="small-info">
-      Calories per gram:
-    </p>
-    <p class="small-info text-center">
-      Fat 9
-      &bull;
-      Carbohydrate 4
-      &bull;
-      Protein 4
-    </p>
-    
-  </section>
-
-  <script>
+<script>
       var video = document.querySelector("#videoElement");
       // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
       
@@ -375,6 +137,6 @@
           });
       }
       
-      </script>
-  </body>
-  </html>
+</script>
+    </body>
+    </html>
