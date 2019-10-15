@@ -1,3 +1,4 @@
+#from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from flask import Flask,render_template, request, flash, url_for,Response, redirect
 from werkzeug import secure_filename
 import os
@@ -14,11 +15,34 @@ import tensorflow as tf
 app = Flask(__name__)
 vc = cv2.VideoCapture(0)
 
+item_list = [
+	{
+		"ID" : "234",
+		"Name" : "Horlicks Classic Malt 1KG",
+		"Price" : "345"
+	},
+	{
+		"ID" : "247",
+		"Name" : "Colgate lg",
+		"Price" : "50"
+	},
+	{
+		"ID" : "247",
+		"Name" : "Colgate sm",
+		"Price" : "50"
+	}
+]
 
-# UPLOAD_FOLDER = '/upload/'
-# ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+#rootCAPath = "./AmazonRootCA1.pem"
+#certificatePath = "./8a48f1bc6a.cert.pem"
+#privateKeyPath = "./8a48f1bc6a.private.key"
+#host = "<AWS_IOT_CORE_ENDPOINT>"
+#port = 8883
+#clientId = "cam1"
+#topic = "camera/info"
+
+
 
 @app.route('/')
 def hello_world(name=None):
@@ -43,29 +67,14 @@ def video_feed():
 
 @app.route('/capture', methods = ['GET', 'POST'])
 def capture():
-    #camera = PiCamera() 
-    #camera.start_preview()
-    #camera.capture('/home/pi/flaskappv2/static/img/image.jpg')
-    #camera.stop_preview()
-    #return render_template('index.html')
-    
-    #cap = cv2.VideoCapture(1)
     ret,frame = vc.read()
     print(ret)
     print(frame)
     PATH = '/home/pi/flaskappv2/static/img/image.jpg'
-    grey = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)  
-    #cv2.imgshow("capturing", grey)
+
     cv2.imwrite(PATH, frame)
     cv2.waitKey(0)
 
-    #img1=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-    #plt.imgshow(img1)
-    #plt.title('color Image RGB')
-    #plt.xticks([])
-    #plt.yticks([])
-    #plt.show()
-    #cap.release()
     return redirect('/train')
 
 @app.route('/train', methods = ['GET', 'POST'])
@@ -86,12 +95,25 @@ def train():
     classes = loaded_model.predict(images, batch_size=10)
     print(classes[0])
     if classes[0]>0.5:
-       print(" is a Colgate")
-       status = "Colgate"
+        status = "Colgate"
     else:
-       print(" is a Horlicks")
-       status = "Horlicks"
+        status = "Horlicks"
+    #camMQTTClient = AWSIoTMQTTClient(clientId)
+    #camMQTTClient.configureEndpoint(host, port)
+    #camMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
 
+    #camMQTTClient.configureAutoReconnectBackoffTime(1, 32, 20)
+    #camMQTTClient.configureOfflinePublishQueueing(-1)
+    #camMQTTClient.configureDrainingFrequency(2)  
+    #camMQTTClient.configureConnectDisconnectTimeout(10)  
+    #camMQTTClient.configureMQTTOperationTimeout(5)  
+
+    #camMQTTClient.connect()	
+	
+    #message = {}
+    #message['product'] = status
+    #messageJson = json.dumps(message)
+    #camMQTTClient.publish(topic, messageJson, 1)
     return render_template('index.html',stats=status)
 
 
