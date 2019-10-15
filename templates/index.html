@@ -6,19 +6,27 @@
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
     <link rel="stylesheet" href="{{url_for('static', filename='css/master.css')}}">
+    <style>
+	body{
+	// background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+
+	}
+       thead, thead tr{
+	       background:#0f0f0f;
+		      
+	}
+	.modal{
+		z-index:2000;
+	}
+    </style>
     </head>
     <body>
-    <nav class="navbar is-light">
+    <nav class="navbar is-dark" style="background:#000000">
       <div class="navbar-brand">
-        <a class="navbar-item" >
+        <h2 class="navbar-item has-text-white" style="weight:900" >
           <img src="{{url_for('static', filename='img/logo.png')}}" style="width:170px; height:70px; max-height:100px;margin-left:10px;">
-        </a>
-        <!-- <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div> -->
-
+   
+	</h2>
       </div>
       <div class="navbar-end" href="cart">
         <a class="navbar-item">
@@ -37,39 +45,37 @@
               <p class="subtitle" style="width:100%;padding:20px;background:rgba(195,195,195,.5);position:absolute;z-index:200;">Place the item in front of Camera</p>
 		<img  src="{{ url_for('video_feed') }}" id="videoElement" style="width:100%;height:100%;position:absolute;" alt="">
               
-	  <form enctype=multipart/form-data action="/capture" method = "POST" >
+	<!--  <form enctype=multipart/form-data action="/capture" method = "POST" >
             <input type="submit" class="button is-info is-large" style="position: absolute; bottom:10px;right:10px;" value="capture">   
           </form>
 
+-->
 
-<!-- <button type="btn" class="button is-info is-large" style="position: absolute; bottom:10px;right:10px;"> CAPTURE </button>   -->
+
+   <button type="btn" class="button is-info is-large" style="position: absolute; bottom:10px;right:10px;"  onclick="load_Data()"> CAPTURE </button> 
             </article>
           </div>
         </div>
         <div class="tile is-parent">
-          <article class="tile is-child notification">
+          <article class="tile is-child notification is-dark">
             <div class="content">
-                <p class="title is-4">
-		{% if stats %}
-			{{ pname }}
-		{% else %}
-  			<h1></h1>
-		{% endif %}
+                <p class="title is-4 has-text-white" id="itemTitle">
 		</p>
-                <p class="subtitle" style="padding-top:10px;" id="qty">Quantity : <input type="text" name="quantity" id="quant" value="1" style="width:30px;text-align:center;border-radius:5px;outline:none;border:none"></p>
-              <a class="button is-info" onclick="addCart()">Add to Cart</a><br><br>
-              <a class="button is-info is-large is-fullwidth" onclick="showModal()">Proceed to Checkout (5 item)</a>
+                <p class="subtitle" style="padding-top:10px;">Quantity : <input type="text" name="quantity" id="qty" value="1" style="width:30px;text-align:center;border-radius:5px;outline:none;border:none"></p>
+              <a class="button is-primary is-outlined is-large is-fullwidth" onclick="addCart()">Add to Cart</a><br><br>
+              <a class="button is-primary is-outlined is-large is-fullwidth" onclick="showModal()">Proceed to Checkout (5 item)</a>
             </div>
           </article>
         </div>
       </div>
+<p id="hint" class="title is-3 has-text-warning"></p>
     </div>
     <div class="modal" id="section-to-print">
         <div class="modal-background"></div>
         <div class="modal-card">
           <header class="modal-card-head">
             <p class="modal-card-title">
-              <img src="img/logo.png" style="width:170px; height:70px; max-height:100px;margin-left:10px;">
+              <img src="{{url_for('static', filename='img/logo.png')}}" style="width:170px; height:70px; max-height:100px;margin-left:10px;">
             </p>
             <button class="delete" aria-label="close" onclick="hideModal()"></button>
           </header>
@@ -77,31 +83,23 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>Sr. No</th>
-                  <th>Product ID</th>
-                  <th>Name of Product</th>
-                  <th>Quantity</th>
-                  <th>Cost of Product</th>
-                  <th>Final Cost of Product</th>
+                  <th style="color:#fff;">Sr. No</th>
+                  <th style="color:#fff;">Product ID</th>
+                  <th style="color:#fff;">Name of Product</th>
+                  <th style="color:#fff;">Quantity</th>
+                  <th style="color:#fff;">Cost of Product</th>
+                  <th style="color:#fff;">Final Cost of Product</th>
                 </tr>
               </thead>
               <tbody id="tableBody">
-                <tr>
-                  <td>1</td>
-                  <td>H_CM_1kg</td>
-                  <td>Horlicks Classic Malt 1kg</td>
-                  <td>1</td>
-                  <td>380</td>
-                  <td>380</td>
-                </tr>
               </tbody>
               <tfoot>
                 <tr> 
                   <th colspan="5" style="text-align:right;">
                     Final Cost :
                   </th>
-                  <th colspan="1">
-                      180
+                  <th colspan="1" id="final_cost">
+                      
                     </th>
                 </tr>
               </tfoot>
@@ -113,6 +111,30 @@
           </footer>
         </div>
       </div>
+
+<script>
+function load_Data() {
+  document.getElementById("hint").innerHTML = "Please wait!!! Processing image..."
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      
+	_item = JSON.parse(this.responseText);
+	window.prod = _item.productName;
+	window.prodID = _item.productID;
+	window.prodCost = _item.productCost;
+	document.getElementById("itemTitle").innerHTML = _item.productName;
+	document.getElementById("hint").innerHTML = "image processed...";
+	document.getElementById("hint").className = "title is-3 has-text-success";
+
+    }
+  };
+  xhttp.open("GET", "/capture", true);
+  xhttp.send();
+}
+</script>
+
+
 <script>
 
 function printInvoice(){
@@ -129,19 +151,19 @@ function showModal(){
 }
 </script>
 <script>
+window.fc = 0;
 function addCart(){
     let t_bdy = document.getElementById("tableBody");
-    let qty = document.getElementByID("qty").value;
-    t_cost = qty * parseInt( {{pcost}} );
-    {% if stats %}
-    var tableData = "<td>1</td><td> {{ pid }}</td> <td> {{ pname }} </td><td>+ qty +</td> <td> {{ pcost }} </td>+ t_cost + <td></td>";
+    var qty = document.getElementById("qty").value;
+    var t_cost = qty * parseInt( window.prodCost);
+    window.fc = fc + t_cost;
+    var tableData = "<td>1</td><td> "+ window.prodID +"</td> <td> "+ window.prod+" </td><td>"+ qty +"</td> <td> "+ window.prodCost+" </td>"+ t_cost + "<td></td>";
     var entry = document.createElement('tr');
     entry.innerHTML = tableData;
     t_bdy.appendChild(entry);
-    {% else %}
-
-    {% endif %}
-      
+    
+    document.getElementById("final_cost").innerHTML = window.fc ;
+   
 }
 
 

@@ -1,4 +1,4 @@
-#from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
+from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from flask import Flask,render_template, request, flash, url_for,Response, redirect
 from werkzeug import secure_filename
 import os
@@ -10,34 +10,39 @@ from keras.models import model_from_json
 from keras.preprocessing import image
 import numpy as np
 import tensorflow as tf
+import json
 #import socket
 
 app = Flask(__name__)
 vc = cv2.VideoCapture(0)
 
 item_list = {
-	"101": {
-		"Name": "horlicks-Medium",
-		"Cost": "300"
-	},
-	"102": {
-		"Name": "colgate-toothpaste-small",
-		"Cost": "20"
-	},
-	"103": {
-		"Name": "colgate-toothpaste-medium",
-		"Cost": "60"
-	}
+	"401":{
+			"Name":"horlicks-Medium",
+			"Cost":"300"
+			},
+
+	"402":{
+			"Name":"colgate-toothpaste-small",
+			"Cost":"20"
+		}
+	"403":{
+			"Name":"colgate-toothpaste-medium",
+			"Cost":"60"
+		}
+	"404":{
+			"Name":"Peanut Butter",
+			"Cost":"350"
+		}
 }
 
-
-#rootCAPath = "./AmazonRootCA1.pem"
-#certificatePath = "./8a48f1bc6a.cert.pem"
-#privateKeyPath = "./8a48f1bc6a.private.key"
-#host = "<AWS_IOT_CORE_ENDPOINT>"
-#port = 8883
-#clientId = "cam1"
-#topic = "camera/info"
+rootCAPath = "./AmazonRootCA1.pem"
+certificatePath = "./8a48f1bc6a.cert.pem"
+privateKeyPath = "./8a48f1bc6a.private.key"
+host = "a1s5ihhuzh4ik5-ats.iot.us-east-1.amazonaws.com"
+port = 8883
+clientId = "cam1"
+topic = "camera/info"
 
 
 
@@ -71,7 +76,6 @@ def capture():
 
     cv2.imwrite(PATH, frame)
     cv2.waitKey(0)
-
     return redirect('/train')
 
 @app.route('/train', methods = ['GET', 'POST'])
@@ -93,30 +97,37 @@ def train():
     print(classes[0])
     if classes[0]>0.5:
         p_id = "101"
-	p_name = "horlicks-Medium"
+        p_name = "horlicks-Medium"
         p_cost = "300"
     else:
         p_id = "103"
-	p_name = "colgate-toothpaste-medium"
+        p_name = "colgate-toothpaste-medium"
         p_cost = "60"
+    
 
-    #camMQTTClient = AWSIoTMQTTClient(clientId)
-    #camMQTTClient.configureEndpoint(host, port)
-    #camMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
+    camMQTTClient = AWSIoTMQTTClient(clientId)
+    camMQTTClient.configureEndpoint(host, port)
+    camMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
 
-    #camMQTTClient.configureAutoReconnectBackoffTime(1, 32, 20)
-    #camMQTTClient.configureOfflinePublishQueueing(-1)
-    #camMQTTClient.configureDrainingFrequency(2)  
-    #camMQTTClient.configureConnectDisconnectTimeout(10)  
-    #camMQTTClient.configureMQTTOperationTimeout(5)  
+    camMQTTClient.configureAutoReconnectBackoffTime(1, 32, 20)
+    camMQTTClient.configureOfflinePublishQueueing(-1)
+    camMQTTClient.configureDrainingFrequency(2)  
+    camMQTTClient.configureConnectDisconnectTimeout(10)  
+    camMQTTClient.configureMQTTOperationTimeout(5)  
 
-    #camMQTTClient.connect()	
-	
-    #message = {}
-    #message['productID'] = p_id
-    #message['productName'] = p_name
-    #message['productCost'] = p_cost
-    #messageJson = json.dumps(message)
+    camMQTTClient.connect()	
+    	
+    message = {}
+    message['productID'] = p_id
+    message['productName'] = p_name
+    message['productCost'] = p_cost
+    messageJson = json.dumps(message)
+
+    camMQTTClient.publish(topic,messageJson,1)
+
+    return messageJson;
+    
+
     #camMQTTClient.publish(topic, messageJson, 1)
     return render_template('index.html',pid = p_id,pname = p_name,pcost = p_cost)
 
