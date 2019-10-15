@@ -51,13 +51,13 @@
             <div class="content">
                 <p class="title is-4">
 		{% if stats %}
-			{{ stats }}
+			{{ pname }}
 		{% else %}
   			<h1></h1>
 		{% endif %}
 		</p>
-                <p class="subtitle" style="padding-top:10px;">Quantity : <input type="text" name="quantity" id="quant" value="1" style="width:30px;text-align:center;border-radius:5px;outline:none;border:none"></p>
-              <a class="o">Add to Cart</a><br><br>
+                <p class="subtitle" style="padding-top:10px;" id="qty">Quantity : <input type="text" name="quantity" id="quant" value="1" style="width:30px;text-align:center;border-radius:5px;outline:none;border:none"></p>
+              <a class="button is-info" onclick="addCart()">Add to Cart</a><br><br>
               <a class="button is-info is-large is-fullwidth" onclick="showModal()">Proceed to Checkout (5 item)</a>
             </div>
           </article>
@@ -85,7 +85,7 @@
                   <th>Final Cost of Product</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tableBody">
                 <tr>
                   <td>1</td>
                   <td>H_CM_1kg</td>
@@ -94,14 +94,6 @@
                   <td>380</td>
                   <td>380</td>
                 </tr>
-                <tr>
-                    <td>1</td>
-                    <td>H_CM_1kg</td>
-                    <td>Horlicks Classic Malt 1kg</td>
-                    <td>1</td>
-                    <td>380</td>
-                    <td>380</td>
-                  </tr>
               </tbody>
               <tfoot>
                 <tr> 
@@ -122,6 +114,7 @@
         </div>
       </div>
 <script>
+
 function printInvoice(){
   window.print();
 }
@@ -132,7 +125,26 @@ function hideModal(){
 
 function showModal(){
   document.getElementById('section-to-print').style.display = 'block';
+
 }
+</script>
+<script>
+function addCart(){
+    let t_bdy = document.getElementById("tableBody");
+    let qty = document.getElementByID("qty").value;
+    t_cost = qty * parseInt( {{pcost}} );
+    {% if stats %}
+    var tableData = "<td>1</td><td> {{ pid }}</td> <td> {{ pname }} </td><td>+ qty +</td> <td> {{ pcost }} </td>+ t_cost + <td></td>";
+    var entry = document.createElement('tr');
+    entry.innerHTML = tableData;
+    t_bdy.appendChild(entry);
+    {% else %}
+
+    {% endif %}
+      
+}
+
+
 </script>
 
 <script>

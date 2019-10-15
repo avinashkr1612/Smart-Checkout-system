@@ -15,23 +15,20 @@ import tensorflow as tf
 app = Flask(__name__)
 vc = cv2.VideoCapture(0)
 
-item_list = [
-	{
-		"ID" : "234",
-		"Name" : "Horlicks Classic Malt 1KG",
-		"Price" : "345"
+item_list = {
+	"101": {
+		"Name": "horlicks-Medium",
+		"Cost": "300"
 	},
-	{
-		"ID" : "247",
-		"Name" : "Colgate lg",
-		"Price" : "50"
+	"102": {
+		"Name": "colgate-toothpaste-small",
+		"Cost": "20"
 	},
-	{
-		"ID" : "247",
-		"Name" : "Colgate sm",
-		"Price" : "50"
+	"103": {
+		"Name": "colgate-toothpaste-medium",
+		"Cost": "60"
 	}
-]
+}
 
 
 #rootCAPath = "./AmazonRootCA1.pem"
@@ -95,9 +92,14 @@ def train():
     classes = loaded_model.predict(images, batch_size=10)
     print(classes[0])
     if classes[0]>0.5:
-        status = "Colgate"
+        p_id = "101"
+	p_name = "horlicks-Medium"
+        p_cost = "300"
     else:
-        status = "Horlicks"
+        p_id = "103"
+	p_name = "colgate-toothpaste-medium"
+        p_cost = "60"
+
     #camMQTTClient = AWSIoTMQTTClient(clientId)
     #camMQTTClient.configureEndpoint(host, port)
     #camMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
@@ -111,10 +113,12 @@ def train():
     #camMQTTClient.connect()	
 	
     #message = {}
-    #message['product'] = status
+    #message['productID'] = p_id
+    #message['productName'] = p_name
+    #message['productCost'] = p_cost
     #messageJson = json.dumps(message)
     #camMQTTClient.publish(topic, messageJson, 1)
-    return render_template('index.html',stats=status)
+    return render_template('index.html',pid = p_id,pname = p_name,pcost = p_cost)
 
 
 if __name__ == "__main__":
