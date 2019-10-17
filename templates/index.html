@@ -63,7 +63,7 @@
 		</p>
                 <p class="subtitle" style="padding-top:10px;">Quantity : <input type="text" name="quantity" id="qty" value="1" style="width:30px;text-align:center;border-radius:5px;outline:none;border:none"></p>
               <a class="button is-primary is-outlined is-large is-fullwidth" onclick="addCart()">Add to Cart</a><br><br>
-              <a class="button is-primary is-outlined is-large is-fullwidth" onclick="showModal()">Proceed to Checkout (5 item)</a>
+              <a class="button is-primary is-outlined is-large is-fullwidth" onclick="showModal()">Proceed to Checkout</a>
             </div>
           </article>
         </div>
@@ -73,7 +73,7 @@
     <div class="modal" id="section-to-print">
         <div class="modal-background"></div>
         <div class="modal-card">
-          <header class="modal-card-head">
+          <header class="modal-card-head is-dark">
             <p class="modal-card-title">
               <img src="{{url_for('static', filename='img/logo.png')}}" style="width:170px; height:70px; max-height:100px;margin-left:10px;">
             </p>
@@ -114,11 +114,10 @@
 
 <script>
 function load_Data() {
-  document.getElementById("hint").innerHTML = "Please wait!!! Processing image..."
+  document.getElementById("hint").innerHTML = "please wait !! processing image..."
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      
 	_item = JSON.parse(this.responseText);
 	window.prod = _item.productName;
 	window.prodID = _item.productID;
@@ -126,7 +125,8 @@ function load_Data() {
 	document.getElementById("itemTitle").innerHTML = _item.productName;
 	document.getElementById("hint").innerHTML = "image processed...";
 	document.getElementById("hint").className = "title is-3 has-text-success";
-
+	
+  
     }
   };
   xhttp.open("GET", "/capture", true);
@@ -152,12 +152,14 @@ function showModal(){
 </script>
 <script>
 window.fc = 0;
+window.sr= 1;
 function addCart(){
     let t_bdy = document.getElementById("tableBody");
     var qty = document.getElementById("qty").value;
     var t_cost = qty * parseInt( window.prodCost);
     window.fc = fc + t_cost;
-    var tableData = "<td>1</td><td> "+ window.prodID +"</td> <td> "+ window.prod+" </td><td>"+ qty +"</td> <td> "+ window.prodCost+" </td>"+ t_cost + "<td></td>";
+    var tableData = "<td>" +window.sr +"</td><td> "+ window.prodID +"</td> <td> "+ window.prod+" </td><td>"+ qty +"</td> <td> "+ window.prodCost+" </td>"+ t_cost + "<td></td>";
+    window.sr =window.sr + 1;
     var entry = document.createElement('tr');
     entry.innerHTML = tableData;
     t_bdy.appendChild(entry);

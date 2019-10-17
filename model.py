@@ -25,16 +25,18 @@ item_list = {
 	"402":{
 			"Name":"colgate-toothpaste-small",
 			"Cost":"20"
-		}
+		},
 	"403":{
 			"Name":"colgate-toothpaste-medium",
 			"Cost":"60"
-		}
+		},
 	"404":{
 			"Name":"Peanut Butter",
 			"Cost":"350"
 		}
 }
+
+
 
 rootCAPath = "./AmazonRootCA1.pem"
 certificatePath = "./8a48f1bc6a.cert.pem"
@@ -44,7 +46,8 @@ port = 8883
 clientId = "cam1"
 topic = "camera/info"
 
-
+global count
+count = 401
 
 @app.route('/')
 def hello_world(name=None):
@@ -99,11 +102,25 @@ def train():
         p_id = "101"
         p_name = "horlicks-Medium"
         p_cost = "300"
+    elif (classes[0]>0.5):
+        p_id = "104"
+        p_name = "peanut-butter"
+        p_cost = "60"
+    elif (classes[0]>0.5):
+        p_id = "102"
+        p_name = "colgate-toothpaste-small"
+        p_cost = "60"
     else:
         p_id = "103"
         p_name = "colgate-toothpaste-medium"
         p_cost = "60"
     
+
+    message = {}
+    message['productID'] = p_id
+    message['productName'] = p_name
+    message['productCost'] = p_cost
+    messageJson = json.dumps(message)
 
     camMQTTClient = AWSIoTMQTTClient(clientId)
     camMQTTClient.configureEndpoint(host, port)
@@ -116,21 +133,10 @@ def train():
     camMQTTClient.configureMQTTOperationTimeout(5)  
 
     camMQTTClient.connect()	
-    	
-    message = {}
-    message['productID'] = p_id
-    message['productName'] = p_name
-    message['productCost'] = p_cost
-    messageJson = json.dumps(message)
-
     camMQTTClient.publish(topic,messageJson,1)
+   
 
     return messageJson;
-    
-
-    #camMQTTClient.publish(topic, messageJson, 1)
-    return render_template('index.html',pid = p_id,pname = p_name,pcost = p_cost)
-
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
