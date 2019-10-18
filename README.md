@@ -37,7 +37,4 @@ Go to your project directory  and run the following command
 2. `flask run`
 
 ## Project Demo Images
-<img src="img/Screenshot (276).png" alt="Sending data to greengrass subscription" width="400px"  style="float:left;margin-right:10px;">
-<img src="img/Screenshot (277).png" alt="Sending data to greengrass subscription" width="400px" style="float:left;margin-right:10px;">
-<img src="img/Screenshot (278).png" alt="Sending data to greengrass subscription" width="400px" style="float:left;margin-right:10px;">
-<img src="img/Screenshot (279).png" alt="Sending data to greengrass subscription" width="400px" style="float:left;margin-right:10px;">
+<img src="img/Screenshot (276).png" alt="Sending data to greengrass subscription" width="400px"  style="float:left;margin-right:10px;"><img src="img/Screenshot (277).png" alt="detection of product" width="400px" style="float:right;margin-right:10px;"> <img src="img/Screenshot (278).png" alt="detection of product" width="400px" style="float:left;margin-right:10px;"> <img src="img/Screenshot (279).png" alt="Bill of Products" width="400px" style="float:right;margin-right:10px;">
