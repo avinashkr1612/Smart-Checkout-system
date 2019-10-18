@@ -36,6 +36,8 @@ Go to your project directory  and run the following command
 1. `export FLASK_APP=model.py`
 2. `flask run`
 
-
-
-
+## Project Demo Images
+<img src="img/Screenshot (276).png" alt="Sending data to greengrass subscription" width="400px"  style="float:left;margin-right:10px;">
+<img src="img/Screenshot (277).png" alt="Sending data to greengrass subscription" width="400px" style="float:left;margin-right:10px;">
+<img src="img/Screenshot (278).png" alt="Sending data to greengrass subscription" width="400px" style="float:left;margin-right:10px;">
+<img src="img/Screenshot (279).png" alt="Sending data to greengrass subscription" width="400px" style="float:left;margin-right:10px;">
